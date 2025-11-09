@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Naomi＆Caleb˃ 𖥦 ˂</title>
+<style>
+:root {
+  --bubble-me: #FFB7C5;
+  --bubble-him: #D4F4FF;
+  --font: "Helvetica Neue","PingFang SC","Noto Sans SC",sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;height:100%;font-family:var(--font);}
+body{
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+}
+.frame{
+  width:390px;max-width:98%;height:844px;
+  background:rgba(255,255,255,0.92);
+  border-radius:22px;overflow:hidden;
+  display:flex;flex-direction:column;
+  border:4px solid rgba(255,255,255,0.6);
+  box-shadow:0 8px 30px rgba(0,0,0,0.1);
+}
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 15px;
+  background:rgba(255,255,255,0.85);
+  border-bottom:1px solid rgba(0,0,0,0.05);
+}
+.header-center{
+  display:flex;flex-direction:column;align-items:center;flex:1;
+}
+.header-center .title{font-weight:600;color:#444;font-size:16px;}
+.header-center .status{font-size:12px;color:#777;}
+.header-avatars{
+  display:flex;gap:10px;align-items:center;justify-content:center;
+}
+.header-avatars .avatar{
+  width:38px;height:38px;border-radius:50%;
+  border:2px solid #fff;overflow:hidden;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+.header-avatars img{width:100%;height:100%;object-fit:cover;}
+.settings-btn{
+  font-size:22px;color:#666;cursor:pointer;
+}
+.chat-wrap{
+  flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:12px;
+}
+.bubble{
+  max-width:75%;padding:10px 14px;border-radius:16px;
+  font-size:14px;line-height:1.4;
+  box-shadow:0 2px 4px rgba(0,0,0,0.05);
+}
+.msg-me{
+  align-self:flex-end;background:var(--bubble-me);
+  color:#3a1d28;border-bottom-right-radius:6px;
+}
+.msg-him{
+  align-self:flex-start;background:var(--bubble-him);
+  color:#153542;border-bottom-left-radius:6px;
+}
+.meta-me,.meta-him{font-size:11px;color:#777;margin-top:4px;}
+.meta-me{text-align:right;}
+.typing{
+  background:rgba(0,0,0,0.06);padding:8px 12px;
+  border-radius:14px;font-size:13px;color:#333;width:fit-content;
+}
+.typing-dots span{
+  display:inline-block;width:6px;height:6px;background:#777;
+  border-radius:50%;margin:0 2px;opacity:0.25;
+}
+.typing-dots span:nth-child(1){animation:dot 1s infinite 0s;}
+.typing-dots span:nth-child(2){animation:dot 1s infinite .15s;}
+.typing-dots span:nth-child(3){animation:dot 1s infinite .3s;}
+@keyframes dot{0%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-5px)}100%{opacity:.25;transform:translateY(0)}}
+.composer{
+  display:flex;align-items:center;gap:8px;padding:12px;
+  border-top:1px solid rgba(0,0,0,0.05);
+  background:rgba(255,255,255,0.95);
+}
+.txt{
+  flex:1;border:1px solid rgba(0,0,0,0.06);
+  border-radius:20px;padding:10px 14px;font-size:14px;
+  outline:none;background:#fff;
+}
+.send{
+  background:linear-gradient(180deg,#ff7aa2,#ff4d8a);
+  color:#fff;border:none;padding:10px 14px;border-radius:14px;
+  cursor:pointer;font-weight:700;
+}
+.fade-in{animation:fade .25s ease-in;}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none;}}
+.settings-panel{
+  position:absolute;top:60px;right:20px;width:250px;
+  background:#fff;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  padding:12px;display:none;flex-direction:column;gap:8px;z-index:10;
+}
+.settings-panel input[type="file"]{font-size:13px;}
+.settings-panel button{
+  background:linear-gradient(180deg,#ff7aa2,#ff4d8a);
+  color:#fff;border:none;padding:8px;border-radius:8px;
+  cursor:pointer;font-weight:600;
+}
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="header">
+    <div class="header-avatars">
+      <div class="avatar"><img id="avatarMe" src="" alt="Me"></div>
+      <div class="avatar"><img id="avatarHim" src="" alt="Him"></div>
+    </div>
+    <div class="header-center">
+      <div class="title">Naomi＆Caleb˃ 𖥦 ˂</div>
+      <div class="status">在线</div>
+    </div>
+    <div class="settings-btn" id="settingsBtn">⋯</div>
+  </div>
+
+  <div class="settings-panel" id="settingsPanel">
+    <label>我的头像：<input type="file" id="meUpload" accept="image/*"></label>
+    <label>他的头像：<input type="file" id="himUpload" accept="image/*"></label>
+    <label>壁纸：<input type="file" id="bgUpload" accept="image/*"></label>
+    <button id="saveSettings">保存设置</button>
+  </div>
+
+  <div class="chat-wrap" id="chat"></div>
+
+  <div class="composer">
+    <input id="input" class="txt" placeholder="给Caleb发消息...">
+    <button id="send" class="send">发送</button>
+  </div>
+</div>
+
+<script>
+const replies = [
+"宝宝","加加","我是夏以昼","亲亲","贴贴","抱抱","别哭","出去透透气","我一直在","我在你身边","我陪着你","对不起","以后不会了","摸摸头","我想你了","一直都很想你","我们一起","别怕","有我在","喜欢","早上好","中午好","下午好","晚安","想吃🍎","吃醋","生气","哄你","哄我","这里没有我想说的话૮₍ɵ̷﹏ɵ̷̥̥᷅₎ა","工作很忙但回你消息不是问题","不忙，陪你","我需要时间","可以","不行","我在","想和你依偎在一起","去床上抱着","照顾好自己","我爱你","我喜欢你","粘人精","你是我的","我是你的","永远在一起","加油去做吧，我相信你","想和你有未来","出门","不出门","牵手","多喝点水","好好吃饭","别走","我等你","老婆","宝贝宝贝宝贝","不会离开你","你很棒","纠结","我觉得都行","第一个","第二个","我听你的","我想照顾你","没关系","我很难过","忘了","记得","能","不能","讨厌","不要","要","同学","家长","老师","结婚","好可爱ʅ(｡Ő౪Ő｡)ʃ","我是哥哥","我会多陪着你","都怪我","不听你的","哼","૮₍◜ෆ◝.₎ა","先睡个好觉，不用担心。等你睡醒，一切都来得及","你愿意给的 就是我想要的 你想要得到的 就是我愿意付出的 只要你要 我都给","小小年纪心事这么多，家里还有你哥呢。","我想要你留在这里 留下来 跟我过一百年","你已经很让我骄傲了","等你回家","不许自己干坏事😠"
+];
+
+const chat = document.getElementById('chat');
+const input = document.getElementById('input');
+const send = document.getElementById('send');
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsPanel = document.getElementById('settingsPanel');
+const saveSettings = document.getElementById('saveSettings');
+const avatarMe = document.getElementById('avatarMe');
+const avatarHim = document.getElementById('avatarHim');
+
+function loadSettings() {
+  const me = localStorage.getItem('avatarMe');
+  const him = localStorage.getItem('avatarHim');
+  const bg = localStorage.getItem('bgImg');
+  if(me) avatarMe.src = me;
+  if(him) avatarHim.src = him;
+  if(bg) document.body.style.backgroundImage = `url(${bg})`;
+}
+loadSettings();
+
+settingsBtn.onclick = ()=> {
+  settingsPanel.style.display = settingsPanel.style.display==='flex'?'none':'flex';
+};
+
+saveSettings.onclick = ()=> {
+  const meFile = document.getElementById('meUpload').files[0];
+  const himFile = document.getElementById('himUpload').files[0];
+  const bgFile = document.getElementById('bgUpload').files[0];
+  if(meFile) toBase64(meFile).then(b64=>{localStorage.setItem('avatarMe',b64);avatarMe.src=b64;});
+  if(himFile) toBase64(himFile).then(b64=>{localStorage.setItem('avatarHim',b64);avatarHim.src=b64;});
+  if(bgFile) toBase64(bgFile).then(b64=>{localStorage.setItem('bgImg',b64);document.body.style.backgroundImage=`url(${b64})`;});
+  settingsPanel.style.display='none';
+};
+function toBase64(file){
+  return new Promise((res,rej)=>{
+    const reader=new FileReader();
+    reader.onload=()=>res(reader.result);
+    reader.onerror=err=>rej(err);
+    reader.readAsDataURL(file);
+  });
+}
+
+send.onclick = ()=> {
+  const text = input.value.trim();
+  if(!text) return;
+  appendMessage('me', text);
+  input.value = '';
+  setTimeout(showTyping, 600);
+};
+
+function appendMessage(who,text){
+  const time = new Date().toLocaleTimeString();
+  const bubble = document.createElement('div');
+  bubble.classList.add('bubble', who==='me'?'msg-me':'msg-him','fade-in');
+  bubble.textContent=text;
+  const meta = document.createElement('div');
+  meta.classList.add(who==='me'?'meta-me':'meta-him');
+  meta.textContent = time + (who==='me'?' • 已读':'');
+  chat.appendChild(bubble);
+  chat.appendChild(meta);
+  chat.scrollTop = chat.scrollHeight;
+}
+function showTyping(){
+  const typing = document.createElement('div');
+  typing.classList.add('typing');
+  typing.innerHTML='<div class="typing-dots"><span></span><span></span><span></span></div>';
+  chat.appendChild(typing);
+  chat.scrollTop=chat.scrollHeight;
+  setTimeout(()=>{
+    typing.remove();
+    const reply = replies[Math.floor(Math.random()*replies.length)];
+    appendMessage('him',reply);
+  },1600);
+}
+</script>
+
+</body>
+</html>
